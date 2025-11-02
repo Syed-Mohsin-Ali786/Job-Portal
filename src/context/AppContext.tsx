@@ -1,14 +1,16 @@
-import { createContext,useState, type ReactNode } from "react";
+import { createContext, useEffect, useState, type ReactNode } from "react";
+import { jobsData, type Job } from "../assets/assets";
 
-interface SearchFilter {
-  title: string|undefined;
-  location: string|undefined;
+export interface SearchFilter {
+  title: string | undefined;
+  location: string | undefined;
 }
 
 export interface AppContextValue {
   searchFilter: SearchFilter;
-  setSearchFilter: (filter: SearchFilter) => void;
-  isLoading: boolean;
+  setSearchFilter: React.Dispatch<React.SetStateAction<SearchFilter>>;
+  isSearch: boolean;
+  jobs:Job[];
   setIsSearch: (loading: boolean) => void;
 }
 
@@ -16,25 +18,35 @@ interface AppContextProviderProps {
   children: ReactNode;
 }
 
+
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
-export const AppContextProvider = ({children}:AppContextProviderProps) => {
+export const AppContextProvider = ({ children }: AppContextProviderProps) => {
   const [searchFilter, setSearchFilter] = useState<SearchFilter>({
     title: "",
     location: "",
   });
 
-  const [isLoading, setIsSearch] = useState<boolean>(false);
+  const [isSearch, setIsSearch] = useState<boolean>(false);
+  const [jobs, setJobs] = useState<Job[]>([]);
 
+  // Job funtions
+  const fetchJobs = async () => {
+    setJobs(jobsData);
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
   const value = {
     searchFilter,
     setSearchFilter,
-    isLoading,
+    isSearch,
     setIsSearch,
+    jobs,
+    setJobs,
   };
-  return (
-    <AppContext.Provider value={value}>{children}</AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 export default AppContext;

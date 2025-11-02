@@ -34,6 +34,23 @@ import samsung_logo from './samsung_logo.png'
 import adobe_logo from './adobe_logo.png'
 import amazon_logo from './amazon_logo.png'
 
+export interface Job {
+  _id: string;
+  title: string;
+  location: string;
+  level: string;
+  companyId: {
+    _id: string;
+    name: string;
+    email: string;
+    image: string;
+  };
+  description: string;
+  salary: number;
+  date: number;
+  category: string;
+}
+
 export const assets = {
     logo,
     search_icon,
@@ -72,7 +89,7 @@ export const assets = {
     amazon_logo
 }
 
-export const JobCategories = [
+export const JobCategories= [
     "Programming",
     "Data Science",
     "Designing",

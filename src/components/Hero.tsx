@@ -14,7 +14,10 @@ function Hero() {
       location: locationRef.current?.value,
     });
     setIsSearch(true);
-  
+    console.log({
+      title: titleRef.current?.value,
+      location: locationRef.current?.value,
+    });
     
   };
 
