@@ -2,8 +2,8 @@ import { createContext, useEffect, useState, type ReactNode } from "react";
 import { jobsData, type Job } from "../assets/assets";
 
 export interface SearchFilter {
-  title: string | undefined;
-  location: string | undefined;
+  title: string;
+  location: string ;
 }
 
 export interface AppContextValue {
@@ -11,6 +11,7 @@ export interface AppContextValue {
   setSearchFilter: React.Dispatch<React.SetStateAction<SearchFilter>>;
   isSearch: boolean;
   jobs:Job[];
+  setJobs: React.Dispatch<React.SetStateAction<Job[]>>;
   setIsSearch: (loading: boolean) => void;
 }
 

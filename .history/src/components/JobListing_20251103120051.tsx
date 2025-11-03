@@ -16,7 +16,7 @@ function JobListing() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string[]>([]);
-  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
+  const [filteredJobs, setFilteredJobs] = useState(jobs);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategories((prev) =>
@@ -163,7 +163,8 @@ function JobListing() {
         </h3>
         <p className="mb-8">Get your desire jobs from top companies</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filteredJobs?.slice((currentPage - 1) * 6, currentPage * 6)
+          {filteredJobs
+            .slice((currentPage - 1) * 6, currentPage * 6)
             .map((job, index) => (
               <JobCart key={index} job={job} />
             ))}

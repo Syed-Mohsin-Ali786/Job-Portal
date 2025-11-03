@@ -10,8 +10,8 @@ function Hero() {
 
   const onSearch = () => {
     setSearchFilter({
-      title: titleRef.current?.value,
-      location: locationRef.current?.value,
+      title: titleRef.current?.value||'',
+      location: locationRef.current?.value||'',
     });
     setIsSearch(true);
     console.log({
