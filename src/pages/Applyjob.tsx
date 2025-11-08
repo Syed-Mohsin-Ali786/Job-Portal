@@ -97,7 +97,7 @@ function Applyjob() {
                     job._id !== jobData._id &&
                     job.companyId._id === jobData.companyId._id
                 )
-                .filter((job) => true)
+                .filter(() => true)
                 .slice(0, 4)
                 .map((job, index) => (
                   <JobCart key={index} job={job} />

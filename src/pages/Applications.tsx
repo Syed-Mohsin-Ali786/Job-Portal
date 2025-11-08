@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 
 function Applications() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [resume, setResume] = useState(null);
+  const [resume, setResume] = useState<File | null>(null);
   return (
     <>
       <Navbar />
@@ -21,7 +21,7 @@ function Applications() {
                 </p>
                 <input
                   id="resumeUpload"
-                  onChange={(e) => setResume(e.target.files[0])}
+                  onChange={(e) => e.target.files && setResume(e.target.files[0])}
                   type="file"
                   hidden
                   accept="application/pdf"
@@ -66,7 +66,7 @@ function Applications() {
           <tbody>
             {jobsApplied.map((job, index) =>
               true ? (
-                <tr>
+                <tr key={index}>
                   <td className="py-3 px-4 flex items-center gap-2 border-b">
                     <img className="w-8 h-8" src={job.logo} alt="" />
                     {job.company}
