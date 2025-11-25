@@ -1,5 +1,5 @@
 import React from "react";
-import { assets, type Job } from "../assets/assets";
+import { type Job } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 
 function JobCart({ job }: { job: Job }) {
@@ -7,7 +7,7 @@ function JobCart({ job }: { job: Job }) {
   return (
     <div className="border  p-6 shadow rounded">
       <div className="flex justify-between items-center">
-        <img className="h-8" src={assets.company_icon} alt="" />
+        <img className="h-8" src={job.companyId.image} alt="" />
       </div>
       <h4 className="font-medium text-xl mt-2">{job.title}</h4>
       <div className="flex items-center mt-2 gap-3 text-xs">

@@ -1,10 +1,11 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
-
+import useContextProvider from "../../hooks/useContext";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const { companyData } = useContextProvider();
   return (
     <div className="min-h-screen">
       {/* Navbar for Recuriter Panel */}
@@ -16,23 +17,25 @@ function Dashboard() {
             src={assets.logo}
             alt=""
           />
-          <div className="flex justify-center gap-3 items-center">
-            <p className="max-sm:hidden text-gray-600 font-medium ">
-              Welcome,Al Sadat Company{" "}
-            </p>
-            <div className="relative group cursor-pointer">
-              <img
-                className="w-8 border rounded-full "
-                src={assets.company_icon}
-                alt=""
-              />
-              <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-12">
-                <ul className="list-none m-0 p-2 bg-white rounded-md border text-sm">
-                  <li className="py-1 px-2 cursor-pointer pr-10">Logout</li>
-                </ul>
+          {companyData && (
+            <div className="flex justify-center gap-3 items-center">
+              <p className="max-sm:hidden text-gray-600 font-medium ">
+                Welcome,{companyData?.name}
+              </p>
+              <div className="relative group cursor-pointer">
+                <img
+                  className="w-8 border rounded-full "
+                  src={companyData.image}
+                  alt=""
+                />
+                <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-12">
+                  <ul className="list-none m-0 p-2 bg-white rounded-md border text-sm">
+                    <li className="py-1 px-2 cursor-pointer pr-10">Logout</li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -75,8 +78,7 @@ function Dashboard() {
             </NavLink>
           </ul>
         </div>
-
-        <div>
+        <div className="flex-1 h-full p-2 sm:p-5">
           <Outlet />
         </div>
       </div>

@@ -1,21 +1,77 @@
 import React, { useEffect, useState } from "react";
 import { assets } from "../assets/assets";
 import useContextProvider from "../hooks/useContext";
+import axios, { isAxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function RecuritorLogin() {
+  const navigate = useNavigate();
   const [state, setState] = useState("Login");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<File | null>(null);
   const [isTextDataSubmited, setIsTextDataSubmited] = useState(false);
-  const { setShowRecuriterLogin } = useContextProvider();
+  const { setShowRecruiterLogin, backendUrl, setCompanyToken, setCompanyData } =
+    useContextProvider();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (state === "Sign Up" && !isTextDataSubmited) {
-      setIsTextDataSubmited(true);
+      return setIsTextDataSubmited(true);
+    }
+
+    try {
+      if (state === "Login") {
+        const { data } = await axios.post(`${backendUrl}/api/company/login`, {
+          email,
+          password,
+        });
+        if (data.success) {
+          setCompanyToken(data.token);
+          setCompanyData(data.company);
+          localStorage.setItem("companyToken", data.token);
+          setShowRecruiterLogin(false);
+          navigate("/dashboard");
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        if (!image) {
+          toast.error("Please upload a company logo.");
+          return;
+        }
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("password", password);
+        formData.append("email", email);
+        formData.append("image", image);
+        const { data } = await axios.post(
+          `${backendUrl}/api/company/register`,
+          formData
+        );
+        if (data.success) {
+          setCompanyToken(data.token);
+          setCompanyData(data.company);
+          localStorage.setItem("companyToken", data.token);
+          setShowRecruiterLogin(false);
+          navigate("/dashboard");
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      if (isAxiosError(error)) {
+        toast.error(error.message);
+        const backendErrorMessage = error.response?.data?.message;
+        throw new Error(backendErrorMessage || "Login failed");
+      }
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("An unexpected error occurred");
     }
   };
 
@@ -45,7 +101,11 @@ function RecuritorLogin() {
                   alt=""
                 />
                 <input
-                  onChange={(e) => setImage(e.target.files[0])}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      setImage(e.target.files[0]);
+                    }
+                  }}
                   type="file"
                   id="image"
                   hidden
@@ -114,7 +174,7 @@ function RecuritorLogin() {
           <p className="mt-5 text-center">
             Dont't have an account?{" "}
             <span
-              onClick={(e) => setState("Sign Up")}
+              onClick={() => setState("Sign Up")}
               className="text-blue-600 cursor-pointer"
             >
               Sign Up
@@ -135,7 +195,7 @@ function RecuritorLogin() {
           className="absolute top-5 right-5 cursor-pointer"
           src={assets.cross_icon}
           alt=""
-          onClick={() => setShowRecuriterLogin(false)}
+          onClick={() => setShowRecruiterLogin(false)}
         />
       </form>
     </div>
