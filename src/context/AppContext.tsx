@@ -146,16 +146,15 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
       });
       if (data.success) {
         setUserData(data.user);
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
-      if (isAxiosError(error)) {
-        toast.error(error.message);
+      // Silently handle user not found - user may not be in database yet
+      if (isAxiosError(error) && error.response?.status === 404) {
+        console.log("User not found in database yet");
+      } else if (isAxiosError(error)) {
+        console.error("Error fetching user data:", error.message);
       } else if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error");
+        console.error("Error fetching user data:", error.message);
       }
     }
   }, [backendUrl, getToken]);
@@ -169,16 +168,13 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
       });
       if (data.success) {
         setUserApplications(data.applications);
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
+      // Silently handle errors - user may not be in database yet
       if (isAxiosError(error)) {
-        toast.error(error.message);
+        console.error("Error fetching user applications:", error.message);
       } else if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error");
+        console.error("Error fetching user applications:", error.message);
       }
     }
   }, [getToken, backendUrl]);
