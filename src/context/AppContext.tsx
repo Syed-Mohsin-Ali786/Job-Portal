@@ -54,6 +54,7 @@ export interface AppContextValue {
   companyData: Company | null;
   setCompanyData: React.Dispatch<React.SetStateAction<Company | null>>;
   userData: IUser | null;
+  setUserData: React.Dispatch<React.SetStateAction<IUser | null>>;
   userApplications: JobApplication[] | [];
   setUserApplications: React.Dispatch<
     React.SetStateAction<JobApplication[] | []>
@@ -215,6 +216,7 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
     setCompanyData,
     backendUrl,
     userData,
+    setUserData,
     setUserApplications,
     userApplications,
     fetchUserData,

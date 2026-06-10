@@ -1,16 +1,28 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { assets, viewApplicationsPageData } from "../../assets/assets";
+import { assets } from "../../assets/assets";
 import useContextProvider from "../../hooks/useContext";
 import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
 
-interface Applicants {}
+type Applicant = {
+  _id: string;
+  jobId: {
+    title: string;
+    location: string;
+  };
+  userId: {
+    name: string;
+    image?: string;
+    resume: string;
+  };
+  status: string;
+};
 
 function ViewApplication() {
   const { backendUrl, companyToken } = useContextProvider();
 
-  const { applicants, setApplicants } = useState<boolean>(false);
+  const [applicants, setApplicants] = useState<Applicant[] | null>(null);
 
   // Function to fetch company Job  Application
   const fetchCompanyJobApplications = useCallback(async () => {
@@ -19,7 +31,8 @@ function ViewApplication() {
         headers: { token: companyToken },
       });
       if (data.success) {
-        setApplicants(data.applicantions.reverse());
+const list = Array.isArray(data.applications) ? data.applications : [];
+        setApplicants(list.slice().reverse());
       } else {
         toast.error(data.message);
       }
@@ -37,11 +50,12 @@ function ViewApplication() {
 
   const changeJobApplicationStatus = async (id: string, status: string) => {
     try {
-      const { data } = await axios.get(
+      const { data } = await axios.post(
         `${backendUrl}/api/company/change-status`,
         { id, status },
-        { headers: { token: companyToken } }
+        { headers: { token: companyToken } },
       );
+
       if (data.success) {
         fetchCompanyJobApplications();
       } else {
@@ -83,8 +97,8 @@ function ViewApplication() {
             </thead>
             <tbody>
               {applicants
-                .fiter((item) => item.jobId && item.userId)
-                .map((applicant, index) => (
+                .filter((item) => item.jobId && item.userId)
+                .map((applicant: Applicant, index: number) => (
                   <tr key={index} className="text-gray-700">
                     <td className="px-4 py-2 border-b text-center">
                       {index + 1}

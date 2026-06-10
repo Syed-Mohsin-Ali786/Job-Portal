@@ -36,8 +36,8 @@ function Applications() {
         `${backendUrl}/api/users/update-resume`,
         formData,
         {
-          headers: { Authorization: `Bearer${token}` },
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       if (data.success) {
         toast.success(data.message);
@@ -97,7 +97,11 @@ function Applications() {
               <a
                 target="_blank"
                 className="bg-blue-100 text-blue-600 px-4 py-2 rounded-xl"
-                href={userData?.resume}
+                href={
+                  typeof userData?.resume === "string"
+                    ? userData.resume
+                    : undefined
+                }
               >
                 Resume
               </a>
@@ -145,8 +149,8 @@ function Applications() {
                       job.status === "Accepted"
                         ? "bg-green-100"
                         : job.status === "Rejected"
-                        ? "bg-red-100"
-                        : "bg-blue-100"
+                          ? "bg-red-100"
+                          : "bg-blue-100"
                     } px-4 py-1.5 rounded`}
                   >
                     {job.status}

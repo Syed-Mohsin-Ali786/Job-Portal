@@ -47,21 +47,40 @@ function Applyjob() {
         navigate("/applications");
         return toast.error("Upload resume to apply");
       }
+
+      if (!jobData?._id) {
+        return toast.error("Job not found.");
+      }
+
       const token = await getToken();
-      const { data } = await axios.post(`${backendUrl}/api/users/apply`, {
-        jobId: jobData?._id,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (data.success) {
-        toast.success(data.message);
+      const { data } = await axios.post(
+        `${backendUrl}/api/users/apply`,
+        { jobId: jobData._id },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (data?.success) {
+        toast.success(data.message ?? "Applied Successfully");
+        setAlreadyApplied(true);
       } else {
-        toast.error(data.message);
+        toast.error(data?.message ?? "Unable to apply.");
       }
     } catch (error) {
       if (isAxiosError(error)) {
-        toast.error(error.message);
+        const status = error.response?.status;
+        const backendMessage = (error.response?.data as { message?: string } | undefined)?.message;
+
+        if (status === 409 || status === 400) {
+          // backend custom message: "Already Applied"
+          toast.error(backendMessage ?? "Already applied");
+          setAlreadyApplied(true);
+          return;
+        }
+
+        toast.error(backendMessage ?? error.message);
+        return;
       }
+
       if (error instanceof Error) {
         toast.error(error.message);
       }
@@ -70,7 +89,7 @@ function Applyjob() {
 
   const checkAlreadyApplied = useCallback(async () => {
     const hasApplied = userApplications.some(
-      (item) => item.jobId._id === jobData?._id
+      (item) => item.jobId._id === jobData?._id,
     );
     if (hasApplied) {
       setAlreadyApplied(true);
@@ -160,12 +179,12 @@ function Applyjob() {
                 .filter(
                   (job) =>
                     job._id !== jobData._id &&
-                    job.companyId._id === jobData.companyId._id
+                    job.companyId._id === jobData.companyId._id,
                 )
                 .filter((job) => {
                   // Set of applied jobIds
                   const appliedJobsIds = new Set(
-                    userApplications.map((app) => app.jobId && app.jobId._id)
+                    userApplications.map((app) => app.jobId && app.jobId._id),
                   );
                   return !appliedJobsIds.has(job._id);
                 })
